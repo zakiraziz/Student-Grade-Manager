@@ -688,3 +688,112 @@ export const AnalyticsPage: React.FC = () => {
     </div>
   );
 };
+ {/* Radar Chart for Performance Metrics */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Performance Radar</CardTitle>
+                <CardDescription>
+                  Multi-dimensional performance analysis
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={350}>
+                  <RadarChart data={[
+                    { metric: 'Speed', value: stats?.efficiency || 0 },
+                    { metric: 'Quality', value: stats?.completionRate || 0 },
+                    { metric: 'Consistency', value: stats?.productivityScore || 0 },
+                    { metric: 'Impact', value: stats?.estimatedTimeSaved ? Math.min(100, stats.estimatedTimeSaved * 10) : 0 },
+                    { metric: 'Growth', value: stats?.streak ? Math.min(100, stats.streak * 5) : 0 },
+                  ]}>
+                    <PolarGrid />
+                    <PolarAngleAxis dataKey="metric" />
+                    <PolarRadiusAxis domain={[0, 100]} />
+                    <Radar name="Performance" dataKey="value" stroke="#3B82F6" fill="#3B82F6" fillOpacity={0.6} />
+                    <Tooltip />
+                  </RadarChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Enhanced Area Chart with Predictions */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Productivity Trend Analysis</CardTitle>
+              <CardDescription>
+                Historical performance with AI predictions
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={400}>
+                <ComposedChart data={stats?.weeklyProductivity}>
+                  <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
+                  <XAxis dataKey="day" />
+                  <YAxis yAxisId="left" />
+                  <YAxis yAxisId="right" orientation="right" />
+                  <Tooltip />
+                  <Legend />
+                  <Area
+                    yAxisId="left"
+                    type="monotone"
+                    dataKey="completed"
+                    fill="url(#blueGradient)"
+                    stroke="#3B82F6"
+                    strokeWidth={2}
+                    name="Completed Tasks"
+                  />
+                  <Line
+                    yAxisId="right"
+                    type="monotone"
+                    dataKey="productivity"
+                    stroke="#10B981"
+                    strokeWidth={3}
+                    dot={{ r: 6, strokeWidth: 2 }}
+                    name="Productivity Score"
+                  />
+                  {showPredictions && (
+                    <Line
+                      yAxisId="right"
+                      type="monotone"
+                      dataKey="productivity"
+                      stroke="#F59E0B"
+                      strokeDasharray="5 5"
+                      strokeWidth={2}
+                      name="Predicted Trend"
+                      data={stats?.weeklyProductivity.map((item, idx) => ({
+                        ...item,
+                        productivity: item.productivity + (idx * 2)
+                      }))}
+                    />
+                  )}
+                </ComposedChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="forecast" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>7-Day Forecast</CardTitle>
+              <CardDescription>
+                Predicted task completion based on historical data
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={400}>
+                <BarChart data={stats?.forecast}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="date" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="predicted" fill="#3B82F6" name="Predicted Tasks">
+                    {stats?.forecast.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+              
+          
