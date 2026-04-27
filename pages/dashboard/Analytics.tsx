@@ -795,5 +795,170 @@ export const AnalyticsPage: React.FC = () => {
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
+                  {/* Forecast Insights */}
+              <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-950 rounded-lg">
+                <div className="flex items-center space-x-2">
+                  <Target className="w-5 h-5 text-blue-600" />
+                  <p className="text-sm font-medium">
+                    Based on your current momentum, you're projected to complete{' '}
+                    <span className="font-bold text-blue-600">
+                      {stats?.forecast.reduce((sum, day) => sum + day.predicted, 0)}
+                    </span>{' '}
+                    tasks in the next 7 days!
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="productivity" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Burn Rate Analysis</CardTitle>
+              <CardDescription>
+                Task completion velocity over time
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
+                <div>
+                  <div className="flex justify-between mb-2">
+                    <span className="text-sm font-medium">Current Burn Rate</span>
+                    <span className="text-sm font-bold text-blue-600">{stats?.burnRate}%</span>
+                  </div>
+                  <Progress value={stats?.burnRate} className="h-2" />
+                </div>
+                <div className="grid grid-cols-3 gap-4 text-center">
+                  <div className="p-4 bg-green-50 dark:bg-green-950 rounded-lg">
+                    <p className="text-2xl font-bold text-green-600">{stats?.completed || 0}</p>
+                    <p className="text-xs text-muted-foreground">Completed</p>
+                  </div>
+                  <div className="p-4 bg-yellow-50 dark:bg-yellow-950 rounded-lg">
+                    <p className="text-2xl font-bold text-yellow-600">{stats?.inProgress || 0}</p>
+                    <p className="text-xs text-muted-foreground">In Progress</p>
+                  </div>
+                  <div className="p-4 bg-purple-50 dark:bg-purple-950 rounded-lg">
+                    <p className="text-2xl font-bold text-purple-600">{stats?.overdue || 0}</p>
+                    <p className="text-xs text-muted-foreground">Overdue</p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="projects" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Project Performance Matrix</CardTitle>
+              <CardDescription>
+                Detailed project analytics and completion metrics
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={400}>
+                <BarChart data={stats?.projectDistribution} layout="vertical">
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis type="number" />
+                  <YAxis type="category" dataKey="name" width={150} />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="tasks" fill="#3B82F6" name="Total Tasks" radius={[0, 4, 4, 0]} />
+                  <Bar dataKey="completed" fill="#10B981" name="Completed Tasks" radius={[0, 4, 4, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
               
+              {/* Project Completion Progress */}
+              <div className="mt-6 space-y-3">
+                {stats?.projectDistribution.map((project, idx) => (
+                  <div key={idx}>
+                    <div className="flex justify-between mb-1">
+                      <span className="text-sm">{project.name}</span>
+                      <span className="text-sm font-medium">{project.completionRate.toFixed(0)}%</span>
+                    </div>
+                    <Progress value={project.completionRate} className="h-2" />
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="team" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Team Leaderboard</CardTitle>
+              <CardDescription>
+                Individual contributions and performance metrics
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {/* Enhanced team member rows with animations */}
+                {[
+                  { name: 'Alice Johnson', completed: 47, efficiency: 94, streak: 12, avatar: 'AJ' },
+                  { name: 'Bob Smith', completed: 38, efficiency: 88, streak: 8, avatar: 'BS' },
+                  { name: 'Carol Williams', completed: 42, efficiency: 91, streak: 10, avatar: 'CW' },
+                  { name: 'David Brown', completed: 35, efficiency: 85, streak: 7, avatar: 'DB' },
+                ].map((member, index) => (
+                  <div key={index} className="flex items-center justify-between p-4 border rounded-lg hover:shadow-md transition-all duration-300">
+                    <div className="flex items-center space-x-4">
+                      <div className="relative">
+                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-semibold shadow-lg">
+                          {member.avatar}
+                        </div>
+                        {index === 0 && (
+                          <div className="absolute -top-1 -right-1">
+                            <Crown className="w-5 h-5 text-yellow-500" />
+                          </div>
+                        )}
+                      </div>
+                      <div>
+                        <p className="font-medium">{member.name}</p>
+                        <div className="flex items-center space-x-4 mt-1">
+                          <div className="flex items-center space-x-1">
+                            <CheckCircle className="w-3 h-3 text-green-500" />
+                            <span className="text-sm text-muted-foreground">{member.completed} tasks</span>
+                          </div>
+                          <div className="flex items-center space-x-1">
+                            <Flame className="w-3 h-3 text-orange-500" />
+                            <span className="text-sm text-muted-foreground">{member.streak} day streak</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-6">
+                      <div className="text-right">
+                        <p className="text-sm font-medium">Efficiency</p>
+                        <p className="text-2xl font-bold text-green-600">{member.efficiency}%</p>
+                      </div>
+                      <div className="w-32">
+                        <Progress value={member.efficiency} className="h-2" />
+                      </div>
+                      {index === 0 && (
+                        <Badge variant="default" className="bg-gradient-to-r from-yellow-500 to-orange-500">
+                          Top Performer
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+
+      {/* Quick Actions Footer */}
+      <div className="fixed bottom-4 right-4 flex flex-col space-y-2">
+        <Button
+          size="lg"
+          className="rounded-full shadow-lg bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        >
+          <TrendingUp className="w-5 h-5 mr-2" />
+          Back to Top
+        </Button>
+      </div>
           
